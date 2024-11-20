@@ -1,7 +1,7 @@
-const UI = require('ui');
-const Vector2 = require('vector2');
+// Подключаем Pebble.js UI
+const UI = require('pebblejs/ui');
 
-// Формулы
+// Данные формул (по 3 строки на страницу)
 const formulas = [
   "C → 0",
   "x^n → n * x^(n-1)",
@@ -24,42 +24,42 @@ const formulas = [
   "arccot(x) → -1 / (1 + x^2)"
 ];
 
-// Разделяем формулы на страницы (по 3 строки)
+// Разбиваем формулы на страницы (по 3 строки)
 const pages = [];
 for (let i = 0; i < formulas.length; i += 3) {
-  pages.push(formulas.slice(i, i + 3));
+  pages.push(formulas.slice(i, i + 3).join('\n'));
 }
 
-// Текущая страница
+// Переменная текущей страницы
 let currentPage = 0;
 
-// Функция обновления экрана
-function updateScreen(card, page) {
-  card.body(pages[page].join('\n'));
-}
-
-// Главное окно
+// Создаем главное окно
 const main = new UI.Card({
   title: 'Formulas',
-  body: '',
+  body: pages[currentPage],
   scrollable: true
 });
 
-// Отобразить первую страницу
-updateScreen(main, currentPage);
+// Показ главного окна
 main.show();
 
-// Обработка нажатий кнопок
+// Функция для обновления содержимого
+function updatePage(card, pageIndex) {
+  card.body(pages[pageIndex]);
+}
+
+// Обработчики кнопок
 main.on('click', 'up', function() {
   if (currentPage > 0) {
     currentPage -= 1;
-    updateScreen(main, currentPage);
+    updatePage(main, currentPage);
   }
 });
 
 main.on('click', 'down', function() {
   if (currentPage < pages.length - 1) {
     currentPage += 1;
-    updateScreen(main, currentPage);
+    updatePage(main, currentPage);
   }
 });
+
